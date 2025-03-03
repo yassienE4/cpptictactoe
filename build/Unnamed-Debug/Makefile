@@ -282,7 +282,7 @@ include /Users/yassien/Qt/6.7.3/macos/mkspecs/features/mac/sdk.mk
 first: all
 ####### Build rules
 
-tictactoe.app/Contents/MacOS/tictactoe: ui_aigamewindow.h ui_mainwindow.h $(OBJECTS)  
+tictactoe.app/Contents/MacOS/tictactoe: ui_mainwindow.h $(OBJECTS)  
 	@test -d tictactoe.app/Contents/MacOS/ || mkdir -p tictactoe.app/Contents/MacOS/
 	$(LINK) $(LFLAGS) -o $(TARGET)  $(OBJECTS) $(OBJCOMP) $(LIBS)
 
@@ -715,7 +715,7 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../aigamewindow.h ../../mainwindow.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../../aigamewindow.cpp ../../main.cpp ../../mainwindow.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../aigamewindow.ui ../../mainwindow.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../../mainwindow.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -750,6 +750,12 @@ compiler_moc_header_clean:
 moc_aigamewindow.cpp: ../../aigamewindow.h \
 		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QMainWindow \
 		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QPushButton \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QGraphicsView \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qgraphicsview.h \
 		../../../Qt/6.7.3/macos/libexec/moc
 	/Users/yassien/Qt/6.7.3/macos/libexec/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -D__cplusplus=199711L -D__APPLE_CC__=6000 -D__clang__ -D__clang_major__=16 -D__clang_minor__=0 -D__clang_patchlevel__=0 -D__GNUC__=4 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=1 -I/Users/yassien/Qt/6.7.3/macos/mkspecs/macx-clang -I/Users/yassien/tictactoe -I/Users/yassien/Qt/6.7.3/macos/lib/QtWidgets.framework/Headers -I/Users/yassien/Qt/6.7.3/macos/lib/QtGui.framework/Headers -I/Users/yassien/Qt/6.7.3/macos/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -F/Users/yassien/Qt/6.7.3/macos/lib ../../aigamewindow.h -o moc_aigamewindow.cpp
 
@@ -763,13 +769,9 @@ compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_aigamewindow.h ui_mainwindow.h
+compiler_uic_make_all: ui_mainwindow.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_aigamewindow.h ui_mainwindow.h
-ui_aigamewindow.h: ../../aigamewindow.ui \
-		../../../Qt/6.7.3/macos/libexec/uic
-	/Users/yassien/Qt/6.7.3/macos/libexec/uic ../../aigamewindow.ui -o ui_aigamewindow.h
-
+	-$(DEL_FILE) ui_mainwindow.h
 ui_mainwindow.h: ../../mainwindow.ui \
 		../../../Qt/6.7.3/macos/libexec/uic
 	/Users/yassien/Qt/6.7.3/macos/libexec/uic ../../mainwindow.ui -o ui_mainwindow.h
@@ -789,7 +791,12 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 aigamewindow.o: ../../aigamewindow.cpp ../../aigamewindow.h \
 		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QMainWindow \
 		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
-		ui_aigamewindow.h
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QPushButton \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QGraphicsView \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qgraphicsview.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o aigamewindow.o ../../aigamewindow.cpp
 
 main.o: ../../main.cpp ../../mainwindow.h \
@@ -803,7 +810,13 @@ mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QMainWindow \
 		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		ui_mainwindow.h \
-		../../aigamewindow.h
+		../../aigamewindow.h \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QPushButton \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/QGraphicsView \
+		../../../Qt/6.7.3/macos/lib/QtWidgets.framework/Headers/qgraphicsview.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../../mainwindow.cpp
 
 moc_aigamewindow.o: moc_aigamewindow.cpp 

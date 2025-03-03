@@ -1,15 +1,26 @@
 #include "aigamewindow.h"
-#include "ui_aigamewindow.h"
 
-AiGameWindow::AiGameWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::AiGameWindow)
+
+AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
+    QMainWindow(parent)
 {
-    ui->setupUi(this);
+    diffuculty = diff;
+    buttonMatrix = {
+        {TL, TM, TR},
+        {ML, MM, MR},
+        {BL, BM, BR}
+    };
+    gameMatrix = {
+        {CellState::Empty,CellState::Empty,CellState::Empty},
+        {CellState::Empty,CellState::Empty,CellState::Empty},
+        {CellState::Empty,CellState::Empty,CellState::Empty}
+    };
+    turn = 0;
+    mcount = 0;
 
 }
 
 AiGameWindow::~AiGameWindow()
 {
-    delete ui;
+
 }
