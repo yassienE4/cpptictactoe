@@ -16,7 +16,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_newGame_clicked()
 {
-    AiGameWindow *x = new AiGameWindow(1);
+    AiGameWindow *x = new AiGameWindow(3);
     this->hide();
     x->show();
 }
