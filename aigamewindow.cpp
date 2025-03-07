@@ -1,11 +1,12 @@
 #include "aigamewindow.h"
 #include <QRandomGenerator>
 #include <string>
+using namespace std;
 
 AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
     QMainWindow(parent)
 {
-    diffuculty = diff;
+    diffuculty = 3;
     buttonMatrix = {
         {TL, TM, TR},
         {ML, MM, MR},
@@ -32,6 +33,7 @@ AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
             buttonMatrix[i][j]->setParent(this);
             connect(buttonMatrix[i][j], &QPushButton::clicked, this, &AiGameWindow::buttonPress);
             buttonMatrix[i][j]->setObjectName(QString::number(i) + QString::number(j));
+
         }
     }
 
@@ -47,7 +49,7 @@ void AiGameWindow::buttonPress()
     QPushButton* clickedButton = qobject_cast<QPushButton*>(sender());
     if(clickedButton == nullptr || clickedButton->isEnabled() == false)
         return;
-    std::string name = clickedButton->objectName().toStdString();
+    string name = clickedButton->objectName().toStdString();
     int row = name[0] - '0';
     int col = name[1] - '0';
 
@@ -67,7 +69,7 @@ void AiGameWindow::buttonPress()
 
 
 }
-void AiGameWindow::win(std::string x)
+void AiGameWindow::win(string x)
 {
 
 }
@@ -91,7 +93,7 @@ bool AiGameWindow::checkwin(int row, int col, CellState player)
 
     return false;
 }
-bool AiGameWindow::checkwinall(std::vector<std::vector<CellState>> board, CellState player)
+bool AiGameWindow::checkwinall( vector< vector<CellState>> board, CellState player)
 {
     for (int i = 0; i < 3; i++)
     {
@@ -113,7 +115,7 @@ bool AiGameWindow::checkwinall(std::vector<std::vector<CellState>> board, CellSt
     return false;
 
 }
-bool AiGameWindow::checkdraw(std::vector<std::vector<CellState>> board)
+bool AiGameWindow::checkdraw( vector< vector<CellState>> board)
 {
     for (int i = 0; i < 3; i++)
     {
@@ -201,17 +203,17 @@ void AiGameWindow::easymove()
 void AiGameWindow::hardmove()
 {
     auto result = minmax(gameMatrix, false);
-    auto *move = &result.second;
-    if (move == nullptr || !move->first || !move->second)
+    auto move = result.second;
+    if (!move.first.has_value() || !move.second.has_value())
     {
         // If no valid move is returned, declare a draw and return.
         win("Draw");
         return;
     }
-    gameMatrix[move->first][move->second] = CellState::PlayerO;
-    buttonMatrix[move->first][move->second]->setText("0");
-    buttonMatrix[move->first][move->second]->setEnabled(false);
-    if (checkwin(move->first,move->second, CellState::PlayerO))
+    gameMatrix[move.first.value()][move.second.value()] = CellState::PlayerO;
+    buttonMatrix[move.first.value()][move.second.value()]->setText("O");
+    buttonMatrix[move.first.value()][move.second.value()]->setEnabled(false);
+    if (checkwin(move.first.value(),move.second.value(), CellState::PlayerO))
     {
         win("O");
         return;
@@ -222,7 +224,7 @@ void AiGameWindow::backpress()
 {
 
 }
-std::pair<int,std::pair<int,int>> AiGameWindow::minmax(std::vector<std::vector<CellState>> board, bool maximising)
+pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vector<CellState>> board, bool maximising)
 {
     // base cases
 
@@ -230,7 +232,7 @@ std::pair<int,std::pair<int,int>> AiGameWindow::minmax(std::vector<std::vector<C
     if (checkwinall(board, CellState::PlayerX)) // player 1 maximiing
     {
         // returns (1,(null,null))
-        std::pair<int, std::pair<int, int>> myPair = {1, {-10, -10}};
+        pair<int,  pair<optional<int>, optional<int>>> myPair = {1, {nullopt, nullopt}};
         return myPair; // eval pos1, coords in pos2
     }
 
@@ -238,7 +240,7 @@ std::pair<int,std::pair<int,int>> AiGameWindow::minmax(std::vector<std::vector<C
     if (checkwinall(board, CellState::PlayerO)) // player 2 minimising
     {
         // returns (-1,(null,null))
-        std::pair<int, std::pair<int, int>> myPair = {-1, {-10, -10}};
+        pair<int,  pair<optional<int>, optional<int>>> myPair = {-1, {nullopt, nullopt}};
         return myPair;
     }
 
@@ -246,7 +248,7 @@ std::pair<int,std::pair<int,int>> AiGameWindow::minmax(std::vector<std::vector<C
     if (checkdraw(board))
     {
         // returns (0,(null,null))
-        std::pair<int, std::pair<int, int>> myPair = {0, {-10, -10}};
+        pair<int,  pair<optional<int>, optional<int>>> myPair = {0, {nullopt, nullopt}};
         return myPair;
     }
 
@@ -254,65 +256,65 @@ std::pair<int,std::pair<int,int>> AiGameWindow::minmax(std::vector<std::vector<C
     if (maximising)
     {
         int maxEval = -100;
-        std::pair<int,int> *bestmove = nullptr; // will contain coords of best move
-        std::vector<std::pair<int,int>> emptySquares = getEmptySquares(board); // array of empty coords
+        pair<optional<int>, optional<int> > bestmove; // will contain coords of best move
+        vector< pair<int,int>> emptySquares = getEmptySquares(board); // array of empty coords
 
         for (auto pair : emptySquares) //for each set of coords that are empty
         {
-            std::vector<std::vector<CellState>> boardCopy = cloneBoard(board);
+            vector< vector<CellState>> boardCopy = cloneBoard(board);
             boardCopy[pair.first][pair.second] = CellState::PlayerX;
             int eval = minmax(boardCopy, false).first;
             if (eval > maxEval)
             {
                 maxEval = eval;
-                bestmove = &pair;
+                bestmove = pair;
             }
         }
-        std::pair<int, std::pair<int, int>> returnvalue = {maxEval, {bestmove->first,bestmove->second}};
+        pair<int,  pair<optional<int>, optional<int> > > returnvalue = {maxEval, {bestmove.first,bestmove.second}};
         return returnvalue;
     }
     else
     {
         int minEval = 100;
-        std::pair<int,int> *bestmove = nullptr;
-        std::vector<std::pair<int,int>> emptySquares = getEmptySquares(board);
+        pair<optional<int>, optional<int> > bestmove;
+         vector< pair<int,int>> emptySquares = getEmptySquares(board);
 
         for (auto pair : emptySquares)
         {
 
-            std::vector<std::vector<CellState>> boardCopy = cloneBoard(board);
+             vector< vector<CellState>> boardCopy = cloneBoard(board);
             boardCopy[pair.first][pair.second] = CellState::PlayerO;
             int eval = minmax(boardCopy, true).first;
             if (eval < minEval)
             {
                 minEval = eval;
-                bestmove = &pair;
+                bestmove = pair;
             }
         }
 
-        std::pair<int, std::pair<int, int>> returnvalue = {minEval, {bestmove->first,bestmove->second}};
+        pair<int,  pair<optional<int>, optional<int> > > returnvalue = {minEval, {bestmove.first,bestmove.second}};
         return returnvalue;
     }
 }
-std::vector<std::pair<int,int>> AiGameWindow::getEmptySquares(std::vector<std::vector<CellState>> board)
+ vector< pair<int,int>> AiGameWindow::getEmptySquares( vector< vector<CellState>> board)
 {
-    std::vector<std::pair<int,int>> emptySquares;
+     vector< pair<int,int>> emptySquares;
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
         {
             if (board[i][j] == CellState::Empty)
             {
-                emptySquares.push_back(std::make_pair(i,j));
+                emptySquares.push_back( make_pair(i,j));
             }
         }
     }
     return emptySquares;
 
 }
-std::vector<std::vector<AiGameWindow::CellState>> AiGameWindow::cloneBoard(std::vector<std::vector<CellState>> original)
+ vector< vector<AiGameWindow::CellState>> AiGameWindow::cloneBoard( vector< vector<CellState>> original)
 {
-    std::vector<std::vector<CellState>> clone;
+     vector< vector<CellState>> clone;
     for(auto row : original)
     {
         clone.push_back(row);
