@@ -17,8 +17,6 @@ public:
     enum class CellState { Empty = -1, PlayerX = 1, PlayerO = 0 };
 
 private:
-
-
     int turn = 0;
     int diffuculty = 0;
     int mcount = 0;

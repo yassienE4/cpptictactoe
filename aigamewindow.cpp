@@ -6,7 +6,8 @@ using namespace std;
 AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
     QMainWindow(parent)
 {
-    diffuculty = 3;
+    this->setFixedSize(250,250);
+    diffuculty = diff;
     buttonMatrix = {
         {TL, TM, TR},
         {ML, MM, MR},
@@ -69,10 +70,7 @@ void AiGameWindow::buttonPress()
 
 
 }
-void AiGameWindow::win(string x)
-{
 
-}
 bool AiGameWindow::checkwin(int row, int col, CellState player)
 {
     // check the row of the last move
@@ -132,10 +130,7 @@ bool AiGameWindow::checkdraw( vector< vector<CellState>> board)
     return true;
 }
 
-void AiGameWindow::restartPress()
-{
 
-}
 void AiGameWindow::aiTurn()
 {
     bool hasMove = false;
@@ -220,10 +215,7 @@ void AiGameWindow::hardmove()
     }
 
 }
-void AiGameWindow::backpress()
-{
 
-}
 pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vector<CellState>> board, bool maximising)
 {
     // base cases
@@ -277,7 +269,7 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vecto
     {
         int minEval = 100;
         pair<optional<int>, optional<int> > bestmove;
-         vector< pair<int,int>> emptySquares = getEmptySquares(board);
+        vector< pair<int,int>> emptySquares = getEmptySquares(board);
 
         for (auto pair : emptySquares)
         {
@@ -298,7 +290,7 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vecto
 }
  vector< pair<int,int>> AiGameWindow::getEmptySquares( vector< vector<CellState>> board)
 {
-     vector< pair<int,int>> emptySquares;
+    vector< pair<int,int>> emptySquares;
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -314,11 +306,27 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vecto
 }
  vector< vector<AiGameWindow::CellState>> AiGameWindow::cloneBoard( vector< vector<CellState>> original)
 {
-     vector< vector<CellState>> clone;
+    vector< vector<CellState>> clone;
     for(auto row : original)
     {
         clone.push_back(row);
     }
     return clone;
+
+}
+
+
+void AiGameWindow::backpress()
+{
+
+}
+
+void AiGameWindow::restartPress()
+{
+
+}
+
+void AiGameWindow::win(string x)
+{
 
 }
