@@ -44,6 +44,9 @@ private:
     QPushButton* BL;
     QPushButton* BM;
     QPushButton* BR;
+    QPushButton* Restart;
+private slots:
+    void showWinnerPopup(std::string x);
 
 
 };

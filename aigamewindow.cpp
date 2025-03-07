@@ -1,12 +1,18 @@
 #include "aigamewindow.h"
 #include <QRandomGenerator>
 #include <string>
+#include <QApplication>
+#include <QWidget>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QDialog>
 using namespace std;
 
 AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
     QMainWindow(parent)
 {
-    this->setFixedSize(250,250);
+    this->setFixedSize(250,300);
     diffuculty = diff;
     buttonMatrix = {
         {TL, TM, TR},
@@ -22,7 +28,7 @@ AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
     mcount = 0;
 
     int startX = 0;  // Starting X position
-    int startY = 0;  // Starting Y position
+    int startY = 50;  // Starting Y position
     int spacing = 100;  // Space between buttons
     for(int i =0; i < 3; i++)
     {
@@ -37,6 +43,12 @@ AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
 
         }
     }
+    Restart = new QPushButton();
+    Restart->setText("Restart");
+    Restart->move(75,0);
+    Restart->setFixedSize(100,40);
+    Restart->setParent(this);
+    connect(Restart, &QPushButton::clicked, this, &AiGameWindow::restartPress);
 
 }
 
@@ -323,10 +335,57 @@ void AiGameWindow::backpress()
 
 void AiGameWindow::restartPress()
 {
+    turn = 0;
+    for(int i = 0; i < 3; i++)
+    {
+        for(int j = 0; j <3; j++)
+        {
+            gameMatrix[i][j] = CellState::Empty;
+            buttonMatrix[i][j]->setText("");
+            buttonMatrix[i][j]->setEnabled(true);
+        }
+    }
 
 }
 
 void AiGameWindow::win(string x)
 {
+    showWinnerPopup(x);
+}
 
+void AiGameWindow::showWinnerPopup(string x) {
+
+    QString winstring;
+    switch (x[0]) {
+    case 'X':
+        winstring = "X Won!";
+        break;
+    case 'O':
+        winstring = "O Won!";
+        break;
+    default:
+        winstring = "DRAW!";
+        break;
+    }
+
+
+    QDialog popup(this);
+    popup.setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
+    popup.setStyleSheet("background-color: black; border: 1px solid black; border-radius: 5px;");
+    popup.setFixedSize(100, 100);
+
+    QVBoxLayout layout(&popup);
+    QLabel label(winstring, &popup);
+    label.setStyleSheet("color: white; font-size: 18px;");
+    label.setAlignment(Qt::AlignCenter);
+
+    QPushButton closeButton("Close", &popup);
+    closeButton.setStyleSheet("background-color: white; border-radius: 3px;");
+    connect(&closeButton, &QPushButton::clicked, &popup, &QDialog::accept);
+
+    layout.addWidget(&label);
+    layout.addWidget(&closeButton);
+    layout.setAlignment(Qt::AlignCenter);
+
+    popup.exec(); // Modal dialog (use popup.show() for non-modal)
 }
