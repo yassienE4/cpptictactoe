@@ -286,7 +286,7 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vecto
         for (auto pair : emptySquares)
         {
 
-             vector< vector<CellState>> boardCopy = cloneBoard(board);
+            vector< vector<CellState>> boardCopy = cloneBoard(board);
             boardCopy[pair.first][pair.second] = CellState::PlayerO;
             int eval = minmax(boardCopy, true).first;
             if (eval < minEval)
@@ -371,16 +371,13 @@ void AiGameWindow::showWinnerPopup(string x) {
 
     QDialog popup(this);
     popup.setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
-    popup.setStyleSheet("background-color: black; border: 1px solid black; border-radius: 5px;");
     popup.setFixedSize(100, 100);
 
     QVBoxLayout layout(&popup);
     QLabel label(winstring, &popup);
-    label.setStyleSheet("color: white; font-size: 18px;");
     label.setAlignment(Qt::AlignCenter);
 
     QPushButton closeButton("Close", &popup);
-    closeButton.setStyleSheet("background-color: white; border-radius: 3px;");
     connect(&closeButton, &QPushButton::clicked, &popup, &QDialog::accept);
 
     layout.addWidget(&label);
