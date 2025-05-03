@@ -366,6 +366,8 @@ void AiGameWindow::restartPress()
             buttonMatrix[i][j]->setEnabled(true);
         }
     }
+    totalevals = 0;
+    EvalLabel->setText("0");
 
 }
 
