@@ -9,7 +9,7 @@
 #include <QDialog>
 using namespace std;
 
-int maxDepth = 8; // 8 is the max anyways if there was no depth limiter
+int maxDepth = 8; // 8 is the max anyways if there was no depth limiter since 9 possible moves -1 since the player starts
 int totalevals =0;
 
 AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
