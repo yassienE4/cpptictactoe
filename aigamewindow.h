@@ -33,6 +33,7 @@ private:
     void hardmove();
     void backpress();
     std::pair<int,std::pair<std::optional<int>,std::optional<int>>> minmax(std::vector<std::vector<CellState>> board, bool maximising);
+    std::pair<int, std::pair<std::optional<int>, std::optional<int>>> minmax(std::vector<std::vector<CellState>> board, bool maximising, int depth = 0);
     std::vector<std::pair<int,int>> getEmptySquares(std::vector<std::vector<CellState>> board);
     std::vector<std::vector<CellState>> cloneBoard(std::vector<std::vector<CellState>> original);
     QPushButton* TL;

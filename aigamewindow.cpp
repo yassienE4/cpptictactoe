@@ -9,6 +9,8 @@
 #include <QDialog>
 using namespace std;
 
+int maxDepth = 10;
+
 AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
     QMainWindow(parent)
 {
@@ -209,7 +211,7 @@ void AiGameWindow::easymove()
 }
 void AiGameWindow::hardmove()
 {
-    auto result = minmax(gameMatrix, false);
+    auto result = minmax(gameMatrix, false, 0); // Start with depth 0
     auto move = result.second;
     if (!move.first.has_value() || !move.second.has_value())
     {
@@ -228,7 +230,7 @@ void AiGameWindow::hardmove()
 
 }
 
-pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vector<CellState>> board, bool maximising)
+pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax(vector<vector<CellState>> board, bool maximising, int depth)
 {
     // base cases
 
@@ -255,6 +257,13 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vecto
         pair<int,  pair<optional<int>, optional<int>>> myPair = {0, {nullopt, nullopt}};
         return myPair;
     }
+    
+    // Optional: Set a maximum depth to limit the search
+    if (depth >= maxDepth) {
+        // Return a heuristic value when max depth is reached
+        pair<int, pair<optional<int>, optional<int>>> myPair = {0, {nullopt, nullopt}};
+        return myPair;
+    }
 
     // alogorithm here
     if (maximising)
@@ -267,7 +276,7 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vecto
         {
             vector< vector<CellState>> boardCopy = cloneBoard(board);
             boardCopy[pair.first][pair.second] = CellState::PlayerX;
-            int eval = minmax(boardCopy, false).first;
+            int eval = minmax(boardCopy, false, depth + 1).first;
             if (eval > maxEval)
             {
                 maxEval = eval;
@@ -285,10 +294,9 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vecto
 
         for (auto pair : emptySquares)
         {
-
             vector< vector<CellState>> boardCopy = cloneBoard(board);
             boardCopy[pair.first][pair.second] = CellState::PlayerO;
-            int eval = minmax(boardCopy, true).first;
+            int eval = minmax(boardCopy, true, depth + 1).first;
             if (eval < minEval)
             {
                 minEval = eval;
@@ -300,6 +308,7 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax( vector< vecto
         return returnvalue;
     }
 }
+
  vector< pair<int,int>> AiGameWindow::getEmptySquares( vector< vector<CellState>> board)
 {
     vector< pair<int,int>> emptySquares;
