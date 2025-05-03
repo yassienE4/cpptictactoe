@@ -218,6 +218,9 @@ void AiGameWindow::easymove()
 }
 void AiGameWindow::hardmove()
 {
+    // Reset the evaluation counter before starting a new search
+    totalevals = 0;
+
     auto result = minmax(gameMatrix, false, 0); // Start with depth 0
     auto move = result.second;
     if (!move.first.has_value() || !move.second.has_value())
@@ -239,6 +242,9 @@ void AiGameWindow::hardmove()
 
 pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax(vector<vector<CellState>> board, bool maximising, int depth, int evalutations)
 {
+    // Increment evaluation count at the start of each function call
+    totalevals++;
+
     // base cases
 
     // if x wins
@@ -284,8 +290,6 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax(vector<vector<
             vector< vector<CellState>> boardCopy = cloneBoard(board);
             boardCopy[pair.first][pair.second] = CellState::PlayerX;
             int eval = minmax(boardCopy, false, depth + 1).first;
-            evalutations++;
-            totalevals = totalevals + evalutations;
             if (eval > maxEval)
             {
                 maxEval = eval;
@@ -307,8 +311,6 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax(vector<vector<
             vector< vector<CellState>> boardCopy = cloneBoard(board);
             boardCopy[pair.first][pair.second] = CellState::PlayerO;
             int eval = minmax(boardCopy, true, depth + 1).first;
-            evalutations++;
-            totalevals = totalevals + evalutations;
             if (eval < minEval)
             {
                 minEval = eval;
