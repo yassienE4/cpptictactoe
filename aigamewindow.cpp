@@ -12,6 +12,10 @@ using namespace std;
 int maxDepth = 8; // 8 is the max anyways if there was no depth limiter since 9 possible moves -1 since the player starts
 int totalevals =0;
 
+//findings
+// it is still possible to win at 5 depth,
+// however at 6 depth the ai plays a perfect game
+
 AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
     QMainWindow(parent)
 {
