@@ -9,12 +9,13 @@
 #include <QDialog>
 using namespace std;
 
-int maxDepth = 10;
+int maxDepth = 8; // 8 is the max anyways if there was no depth limiter
+int totalevals =0;
 
 AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
     QMainWindow(parent)
 {
-    this->setFixedSize(250,300);
+    this->setFixedSize(300,300);
     diffuculty = diff;
     buttonMatrix = {
         {TL, TM, TR},
@@ -51,6 +52,12 @@ AiGameWindow::AiGameWindow(int diff, QWidget *parent) :
     Restart->setFixedSize(100,40);
     Restart->setParent(this);
     connect(Restart, &QPushButton::clicked, this, &AiGameWindow::restartPress);
+
+    EvalLabel = new QLabel();
+    EvalLabel->move(180, 0);
+    EvalLabel->setFixedSize(400,40);
+    EvalLabel->setParent(this);
+    EvalLabel->setText("evals");
 
 }
 
@@ -230,7 +237,7 @@ void AiGameWindow::hardmove()
 
 }
 
-pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax(vector<vector<CellState>> board, bool maximising, int depth)
+pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax(vector<vector<CellState>> board, bool maximising, int depth, int evalutations)
 {
     // base cases
 
@@ -277,12 +284,15 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax(vector<vector<
             vector< vector<CellState>> boardCopy = cloneBoard(board);
             boardCopy[pair.first][pair.second] = CellState::PlayerX;
             int eval = minmax(boardCopy, false, depth + 1).first;
+            evalutations++;
+            totalevals = totalevals + evalutations;
             if (eval > maxEval)
             {
                 maxEval = eval;
                 bestmove = pair;
             }
         }
+        EvalLabel->setText(QString::fromStdString(to_string(totalevals)));
         pair<int,  pair<optional<int>, optional<int> > > returnvalue = {maxEval, {bestmove.first,bestmove.second}};
         return returnvalue;
     }
@@ -297,13 +307,15 @@ pair<int, pair<optional<int>,optional<int>>> AiGameWindow::minmax(vector<vector<
             vector< vector<CellState>> boardCopy = cloneBoard(board);
             boardCopy[pair.first][pair.second] = CellState::PlayerO;
             int eval = minmax(boardCopy, true, depth + 1).first;
+            evalutations++;
+            totalevals = totalevals + evalutations;
             if (eval < minEval)
             {
                 minEval = eval;
                 bestmove = pair;
             }
         }
-
+        EvalLabel->setText(QString::fromStdString(to_string(totalevals)));
         pair<int,  pair<optional<int>, optional<int> > > returnvalue = {minEval, {bestmove.first,bestmove.second}};
         return returnvalue;
     }
